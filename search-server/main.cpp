@@ -83,7 +83,7 @@ private:
     set<string> plus_words;
     set<string> minus_words;
   };
-
+private:
   map<string, set<int>> word_to_documents_;
   map<string, map<int, double>> word_to_documents_frequent;
   set<string> stop_words_;
@@ -108,9 +108,7 @@ private:
     for (const string &word : SplitIntoWordsNoStop(text)) {
       if (word[0] == '-') {
         query_words.minus_words.insert(word.substr(1));
-      } else
-
-      {
+      } else {
         query_words.plus_words.insert(word);
       }
     }
