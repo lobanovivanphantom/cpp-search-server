@@ -125,7 +125,6 @@ private:
     for (const string &word : query_words.plus_words) {
       if (word_to_documents_frequent.count(word) != 0) {
         double word_IDF = IDFCalc(word);
-        map<int, double> id_tf = word_to_documents_frequent.at(word);
         for (const auto &[doc_id, tf] : word_to_documents_frequent.at(word)) {
           document_to_relevance[doc_id] += word_IDF * tf;
         }
