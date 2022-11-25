@@ -60,16 +60,7 @@ enum class DocumentStatus {
 
 class SearchServer {
 public:
-  explicit SearchServer(string text) {
-
-    vector<string> words = SplitIntoWords(text);
-    for (string &word : words) {
-      if (!IsValidWord(word)) {
-        throw invalid_argument("There are special characters in stop_words"s);
-      }
-      stop_words_.insert(word);
-    }
-  }
+  explicit SearchServer(string text) : SearchServer(SplitIntoWords(text)) {}
 
   template <typename StringCollection>
   explicit SearchServer(const StringCollection &stop_words) {
@@ -81,9 +72,6 @@ public:
     }
   }
 
-  inline static constexpr int INVALID_DOCUMENT_ID = -1;
-
-  vector<int> verified_document_id;
   void AddDocument(int document_id, const string &document,
                    DocumentStatus status, const vector<int> &ratings) {
     const vector<string> words = SplitIntoWordsNoStop(document);
@@ -103,7 +91,7 @@ public:
     }
     documents_.emplace(document_id,
                        DocumentData{ComputeAverageRating(ratings), status});
-    verified_document_id.push_back(document_id);
+    verified_document_id_.push_back(document_id);
   }
 
   vector<Document> FindTopDocuments(const string &raw_query) const {
@@ -120,13 +108,6 @@ public:
   template <typename DocumentPredicat>
   vector<Document> FindTopDocuments(const string &raw_query,
                                     DocumentPredicat document_predicat) const {
-    if (!IsValidWord(raw_query)) {
-      throw invalid_argument(
-          "There are special characters in FindTopDocuments function!"s);
-    }
-    if (!IsLastPrelastSymbol(raw_query)) {
-      throw invalid_argument("Incorrect last and prelast symbol!"s);
-    }
     const Query query = ParseQuery(raw_query);
     vector<Document> matched_documents =
         FindAllDocuments(query, document_predicat);
@@ -148,16 +129,8 @@ public:
 
   tuple<vector<string>, DocumentStatus> MatchDocument(const string &raw_query,
                                                       int document_id) const {
-    if (!IsLastPrelastSymbol(raw_query)) {
-      throw invalid_argument(
-          "There are special characters in MatchDocument function!"s);
-    }
     if (document_id < 0) {
       throw invalid_argument("ID is negative!"s);
-    }
-    if (!IsValidWord(raw_query)) {
-      throw invalid_argument(
-          "There are special characters in MatchDocument function!"s);
     }
     const Query query = ParseQuery(raw_query);
     vector<string> matched_words;
@@ -181,12 +154,7 @@ public:
     return tuple{matched_words, documents_.at(document_id).status};
   }
 
-  int GetDocumentId(int index) const {
-    if (index >= 0 && index <= verified_document_id.size()) {
-      return verified_document_id[index];
-    }
-    throw out_of_range("Invalix index "s + to_string(index));
-  }
+  int GetDocumentId(int index) const { return verified_document_id_.at(index); }
 
 private:
   struct DocumentData {
@@ -197,6 +165,7 @@ private:
   set<string> stop_words_;
   map<string, map<int, double>> word_to_document_freqs_;
   map<int, DocumentData> documents_;
+  vector<int> verified_document_id_;
 
   bool IsStopWord(const string &word) const {
     return stop_words_.count(word) > 0;
@@ -206,15 +175,6 @@ private:
     return none_of(word.begin(), word.end(),
                    [](char c) { return c >= '\0' && c < ' '; });
   }
-
-  /*
-  static bool IsLetter(const char& letter) {
-      if ((letter >= 'A' && letter <= 'Z') || (letter >= 'a' && letter <= 'z')){
-      return true;
-      }
-      return false;
-  }
-  */
 
   static bool IsLastPrelastSymbol(const string &query) {
     for (int i = 0; i < query.size(); i++) {
@@ -257,6 +217,14 @@ private:
 
   QueryWord ParseQueryWord(string text) const {
     bool is_minus = false;
+    if (!IsLastPrelastSymbol(text)) {
+      throw invalid_argument(
+          "There are special characters in MatchDocument function!"s);
+    }
+    if (!IsValidWord(text)) {
+      throw invalid_argument(
+          "There are special characters in MatchDocument function!"s);
+    }
     if (text[0] == '-') {
       is_minus = true;
       text = text.substr(1);
@@ -273,6 +241,7 @@ private:
     Query query;
     for (const string &word : SplitIntoWords(text)) {
       const QueryWord query_word = ParseQueryWord(word);
+
       if (!query_word.is_stop) {
         if (query_word.is_minus) {
           query.minus_words.insert(query_word.data);
@@ -351,6 +320,6 @@ int main() {
   } catch (const invalid_argument &e) {
     cout << e.what() << endl;
   } catch (const out_of_range &e) {
-    cout << e.what() << endl;
+    cout << e.what() << " Invalid index!" << endl;
   }
 }
