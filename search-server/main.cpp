@@ -178,11 +178,8 @@ private:
 
   static bool IsLastPrelastSymbol(const string &query) {
     for (int i = 0; i < query.size(); i++) {
-      if (query[i] == '-') {
-        if (query[i + 1] == ' ' || query[i + 1] == '-' ||
-            query[i + 1] == '\0') {
-          return false;
-        }
+      if (query[i] == '-')  {
+          return false;       
       }
     }
     return true;
