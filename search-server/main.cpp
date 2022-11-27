@@ -178,7 +178,7 @@ private:
 
   static bool IsLastPrelastSymbol(const string &query) {
     for (int i = 0; i < query.size(); i++) {
-      if (query[i] == '-')  {
+      if (query[i] == '-' && query[i+1] == '-')  {
           return false;       
       }
     }
