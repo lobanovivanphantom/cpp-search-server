@@ -12,6 +12,7 @@
         "algorithm": "cpp",
         "memory": "cpp",
         "initializer_list": "cpp",
-        "numeric": "cpp"
+        "numeric": "cpp",
+        "iosfwd": "cpp"
     }
 }
