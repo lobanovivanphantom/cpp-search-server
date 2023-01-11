@@ -1,0 +1,1 @@
+/usr/bin/c++ -rdynamic CMakeFiles/sprint5.dir/main.cpp.o CMakeFiles/sprint5.dir/document.cpp.o CMakeFiles/sprint5.dir/read_input_functions.cpp.o CMakeFiles/sprint5.dir/request_queue.cpp.o CMakeFiles/sprint5.dir/search_server.cpp.o CMakeFiles/sprint5.dir/string_processing.cpp.o CMakeFiles/sprint5.dir/remove_duplicates.cpp.o -o sprint5 

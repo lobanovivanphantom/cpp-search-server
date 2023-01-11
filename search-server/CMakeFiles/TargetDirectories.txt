@@ -1,0 +1,3 @@
+/home/ivan/practicum/cpp-search-server/search-server/CMakeFiles/sprint5.dir
+/home/ivan/practicum/cpp-search-server/search-server/CMakeFiles/edit_cache.dir
+/home/ivan/practicum/cpp-search-server/search-server/CMakeFiles/rebuild_cache.dir
