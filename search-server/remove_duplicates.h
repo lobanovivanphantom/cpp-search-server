@@ -6,5 +6,4 @@
 #include <set>
 #include <string>
 
-
-void RemoveDuplicates(SearchServer& search_server);
+void RemoveDuplicates(SearchServer &search_server);
